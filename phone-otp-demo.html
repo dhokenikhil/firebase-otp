@@ -134,6 +134,8 @@
     signOutUser = () => {
                 firebase.auth().signOut().then(function() {
                         alert('User Signed Out Successfullyy!!!');
+                        console.log(user.phoneNumber);
+                        console.log('hey');
                         document.getElementById('onUserLogin').style.display = 'block';
                         document.getElementById('userPhoneNumber').innerHTML = user.phoneNumber; 
                         // document.getElementById('account-details').textContent = JSON.stringify(user, null, '  ');
