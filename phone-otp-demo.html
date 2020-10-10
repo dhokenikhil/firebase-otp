@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+        <title>Firebase Authentication</title>
+
+        <style>
+            
+            div
+            {
+                text-align: center;
+            }
+            
+            h2
+            {
+                text-decoration: underline;
+            }
+
+            input
+            {
+                margin-left: 15px;
+            }
+
+            #onUserLogin, #account-details
+            {
+                display: none;
+            }
+
+        </style>
+    </head>
+    <body>
+        <div>
+            <h2>Login Demo</h2>
+            <p>Login using Mobile Number</p>
+            <input type="text" type="tel" id="phNumber"> 
+            <button id="sign-in-button">Send OTP</button> 
+            <br><br>
+            <input type="text" name="user_otp" id="userOTP"> 
+            <button onclick="registerUser()" id="create-button">Verify OTP</button>
+        </div>
+
+        <div id="onUserLogin">
+            <p id="userPhoneNumber"></p>
+            <p id="userProviderData"></p>
+            <button id="sign_out" onclick="signOutUser()">Sign Out</button>
+        </div>
+
+        <div id="account-details">
+            
+        </div>
+
+<script src="https://www.gstatic.com/firebasejs/7.22.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/7.22.1/firebase-auth.js"></script>
+
+<script type="text/javascript">
+
+  window.onload = function() {
+    
+        var firebaseConfig = {
+          apiKey: "AIzaSyD_lyc4vdIEKOnddd3Qz1kuvyxTlC_14cU",
+          authDomain: "webauthentication-1aa4c.firebaseapp.com",
+          databaseURL: "https://webauthentication-1aa4c.firebaseio.com",
+          projectId: "webauthentication-1aa4c",
+          storageBucket: "webauthentication-1aa4c.appspot.com",
+          messagingSenderId: "305187228172",
+          appId: "1:305187228172:web:76a3a507cc3843e310bc29",
+          measurementId: "G-59LW5S5KCG"
+        };
+
+        firebase.initializeApp(firebaseConfig);
+
+        firebase.auth().onAuthStateChanged(function(user) {
+          if (user) {
+            // User is signed in.
+            var uid = user.uid;
+            var email = user.email;
+            var photoURL = user.photoURL;
+            var phoneNumber = user.phoneNumber;
+            var isAnonymous = user.isAnonymous;
+            var displayName = user.displayName;
+            var providerData = user.providerData;
+            var emailVerified = user.emailVerified;
+          }
+        });
+
+        window.recaptchaVerifier = new firebase.auth.RecaptchaVerifier('sign-in-button', {
+                                                                      'size': 'invisible',
+                                                                      'callback': function(response) {
+                                                                        console.log('recaptchaVerifier')
+                                                                       onSignInSubmit();
+                                                                      }
+                                                                    });
+
+        recaptchaVerifier.render().then(function(widgetId) {
+          window.recaptchaWidgetId = widgetId;
+        });
+};
+
+    onSignInSubmit = () => {
+            var phone_number = document.getElementById('phNumber').value;
+            var appVerifier = window.recaptchaVerifier;
+            
+            firebase.auth().signInWithPhoneNumber(phone_number, appVerifier)
+                .then( function(confirmationResult) {
+                    window.confirmationResult = confirmationResult;
+                    alert('OTP has been sent on your phone/mobile number!!!');
+                })
+                .catch( function(error) {
+                    console.log('Error during signInWithPhoneNumber', error);
+                });
+        }
+
+    registerUser = () => {
+                otp = document.getElementById('userOTP').value;
+                confirmationResult
+                .confirm(otp)
+                .then(function (result) {
+                        var user = result.user;
+                        alert('User SignedIn Successfully');
+                        console.log('User SignedIn Successfully');
+                        document.getElementById('onUserLogin').style.display = 'block';
+                        var user = firebase.auth().currentUser;
+                        document.getElementById('account-details').style.display = 'block';
+                        console.log(user.phoneNumber);
+                        document.getElementById('account-details').textContent = JSON.stringify(user, null, '  ');
+                      }).catch(function (error) {
+                        console.error('Error while checking the verification code', error);
+                      });
+    }
+
+    signOutUser = () => {
+                firebase.auth().signOut().then(function() {
+                        alert('User Signed Out Successfullyy!!!');
+                        document.getElementById('onUserLogin').style.display = 'none';
+                        document.getElementById('account-details').style.display = 'none';
+                        document.getElementById('account-details').textContent = null;
+                }).catch(function(error) {
+                        alert('Something Went Wrong!!!');
+                });
+    }
+
+</script>
+</body>
+</html>
