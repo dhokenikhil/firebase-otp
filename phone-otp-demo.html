@@ -43,7 +43,7 @@
 
         <div id="onUserLogin">
             <p><span id="userPhoneNumber"></span> : SignedIn Successfully</p>
-            <p>User's SignedIn provider is : <span id="userProviderData"></span></p>
+            <!-- <p>User's SignedIn provider is : <span id="userProviderData"></span></p> -->
             <button id="sign_out" onclick="signOutUser()">Sign Out</button>
         </div>
 
@@ -134,7 +134,7 @@
     signOutUser = () => {
                 firebase.auth().signOut().then(function() {
                         alert('User Signed Out Successfullyy!!!');
-                        document.getElementById('onUserLogin').style.display = 'none';
+                        document.getElementById('onUserLogin').style.display = 'block';
                         document.getElementById('userPhoneNumber').innerHTML = user.phoneNumber; 
                         // document.getElementById('account-details').textContent = JSON.stringify(user, null, '  ');
                 }).catch(function(error) {
